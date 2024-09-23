@@ -37,8 +37,6 @@ document.getElementById('upload').addEventListener('change', function(event) {
           const iso = EXIF.getTag(this, "ISOSpeedRatings");
           const focalLength = EXIF.getTag(this, "FocalLength");
           const formattedExposureTime = formatExposureTime(exposureTime);
-
-          console.log(inp_camera.checked);
           
           if(inp_camera.checked === true) {
             wrapper_camera.classList.add('active');
@@ -74,11 +72,9 @@ document.getElementById('upload').addEventListener('change', function(event) {
 
   function formatExposureTime(exposureTime) {
     if (exposureTime >= 1) {
-      // Verschlusszeit größer oder gleich 1 Sekunde (keine Bruchdarstellung)
       return exposureTime.toFixed(1);
     } else {
-      // Verschlusszeit kleiner als 1 Sekunde, Umwandlung in Bruch
-      var denominator = Math.round(1 / exposureTime);
+      const denominator = Math.round(1 / exposureTime);
       return `1/${denominator}`;
     }
   }
