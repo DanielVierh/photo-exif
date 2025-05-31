@@ -12,6 +12,7 @@ document.getElementById('upload').addEventListener('change', function (event) {
   const outp_fstop = document.getElementById('outp_fstop');
   const outp_shutterspeed = document.getElementById('outp_shutterspeed');
   const outp_iso = document.getElementById('outp_iso');
+  const outp_date = document.getElementById('outp_date');
 
 
   const wrapper_camera = document.getElementById('wrapper_camera');
@@ -29,13 +30,15 @@ document.getElementById('upload').addEventListener('change', function (event) {
 
       // Sobald das Bild geladen wurde, lese die EXIF-Daten
       EXIF.getData(file, function () {
-
+        console.log('Exif', EXIF.getAllTags(this));
+        
         let cameraModel = EXIF.getTag(this, "Model");
         let exposureTime = EXIF.getTag(this, "ExposureTime");
         let fNumber = EXIF.getTag(this, "FNumber");
         let iso = EXIF.getTag(this, "ISOSpeedRatings");
         let focalLength = EXIF.getTag(this, "FocalLength");
         let formattedExposureTime = formatExposureTime(exposureTime);
+        let dateTimeOriginal = EXIF.getTag(this, "DateTimeOriginal");
 
         setTimeout(() => {
           if (inp_camera.checked === true) {
@@ -142,6 +145,22 @@ document.getElementById('upload').addEventListener('change', function (event) {
             }
             outp_iso.innerHTML = `${parseInt(iso)}`;
           }
+
+          if (inp_date.checked === true) {
+            wrapper_date.classList.add('active');
+
+            if (dateTimeOriginal === undefined) {
+              dateTimeOriginal = '-'
+            }
+            if (dateTimeOriginal !== '-') {
+              const [date, time] = dateTimeOriginal.split(' ');
+              const [year, month, day] = date.split(':');
+              const [hour, minute] = time.split(':');
+              // dateTimeOriginal = `${day} <br> ${monthName(month)}-${year} <br> ${hour}:${minute}`;
+              dateTimeOriginal = `${monthName(month)}<br>${year}`;
+            }
+            outp_date.innerHTML = `${dateTimeOriginal}`;
+          }
         }, 500);
 
       });
@@ -158,4 +177,12 @@ function formatExposureTime(exposureTime) {
     const denominator = Math.round(1 / exposureTime);
     return `1/${denominator}`;
   }
+}
+
+function monthName(monthNumber) {
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+  return months[monthNumber - 1];
 }
